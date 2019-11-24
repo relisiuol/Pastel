@@ -1,0 +1,9 @@
+Package: me.conorthedev.pastel
+Name: Pastel
+Depends: mobilesubstrate
+Version: 1.0
+Architecture: iphoneos-arm
+Description: Colourize your notification badges for free
+Maintainer: ConorTheDev <con0r.b@protonmail.com>
+Author: ConorTheDev <con0r.b@protonmail.com>
+Section: Tweaks
