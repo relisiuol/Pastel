@@ -2,7 +2,7 @@
 
 @interface SBIconBadgeView : UIView
 // Used to set the badge color to any UIColor
-- (void)setBadgeColor:(UIColor *)color;
+- (void)setupPastelBadge:(UIColor *)badgeTintColor;
 @end
 
 @interface SBIconImageView : UIView
@@ -13,19 +13,31 @@
 @end
 
 %hook SBIconBadgeView
+
 // Used to set the badge color to any UIColor
 %new 
--(void)setBadgeColor:(UIColor *)color {
+-(void)setupPastelBadge:(UIColor *)badgeTintColor {
   UIImageView *accessoryImage = MSHookIvar<UIImageView *>(self, "_backgroundView");
   accessoryImage.image = [accessoryImage.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-  [accessoryImage setTintColor:color];
+
+  [accessoryImage setTintColor:badgeTintColor];
+
+  self.layer.shadowRadius = 1.5f;
+  self.layer.shadowColor = [UIColor whiteColor].CGColor;
+  self.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
+  self.layer.shadowOpacity = 1.0f;
+  self.layer.masksToBounds = NO;
+
+  UIEdgeInsets shadowInsets = UIEdgeInsetsMake(0, 0, -1.5f, 0);
+  UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRect:UIEdgeInsetsInsetRect(self.bounds, shadowInsets)];
+  self.layer.shadowPath = shadowPath.CGPath;
 }
 
 %end
 
 %hook SBIconView
 
--(void)drawRect :(CGRect)rect {
+-(void)drawRect:(CGRect)rect {
   %orig(rect);
 
   SBIconImageView *iconImageView = MSHookIvar<SBIconImageView *>(self, "_iconImageView");
@@ -46,7 +58,7 @@
 
   UIView *_accessoryView = MSHookIvar<UIView *>(self, "_accessoryView");
   if (_accessoryView != nil && [_accessoryView isKindOfClass: %c(SBIconBadgeView)])
-    [(SBIconBadgeView *)_accessoryView setBadgeColor:color];
+    [(SBIconBadgeView *)_accessoryView setupPastelBadge:color];
 }
 
 %end
