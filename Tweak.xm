@@ -1,17 +1,4 @@
-#import <UIKit/UIKit.h>
-#import <ConorTheDev/libconorthedev.h>
-
-@interface SBIconBadgeView : UIView
-// Used to set the badge color to any UIColor
-- (void)setupPastelBadge:(UIColor *)badgeTintColor;
-@end
-
-@interface SBIconImageView : UIView
-- (id)contentsImage;
-@end
-
-@interface SBIconView : UIView
-@end
+#import "Pastel.h"
 
 %hook SBIconBadgeView
 
@@ -35,7 +22,7 @@
   UIImage *image = [iconImageView contentsImage];
 
   CTDColorUtils *colorUtils = [[CTDColorUtils alloc] init];
-  color = [colorUtils getAverageColorFrom:image
+  UIColor *color = [colorUtils getAverageColorFrom:image
                                 withAlpha:1.0];
 
   UIView *_accessoryView = MSHookIvar<UIView *>(self, "_accessoryView");
