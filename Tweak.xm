@@ -1,4 +1,5 @@
 #import <UIKit/UIKit.h>
+#import <ConorTheDev/libconorthedev.h>
 
 @interface SBIconBadgeView : UIView
 // Used to set the badge color to any UIColor
@@ -21,16 +22,6 @@
   accessoryImage.image = [accessoryImage.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 
   [accessoryImage setTintColor:badgeTintColor];
-
-  self.layer.shadowRadius = 1.5f;
-  self.layer.shadowColor = [UIColor whiteColor].CGColor;
-  self.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);
-  self.layer.shadowOpacity = 1.0f;
-  self.layer.masksToBounds = NO;
-
-  UIEdgeInsets shadowInsets = UIEdgeInsetsMake(0, 0, -1.5f, 0);
-  UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRect:UIEdgeInsetsInsetRect(self.bounds, shadowInsets)];
-  self.layer.shadowPath = shadowPath.CGPath;
 }
 
 %end
@@ -43,18 +34,9 @@
   SBIconImageView *iconImageView = MSHookIvar<SBIconImageView *>(self, "_iconImageView");
   UIImage *image = [iconImageView contentsImage];
 
-  CGSize size = {1, 1};
-  UIGraphicsBeginImageContext(size);
-  CGContextRef ctx = UIGraphicsGetCurrentContext();
-  CGContextSetInterpolationQuality(ctx, kCGInterpolationMedium);
-  [image drawInRect:(CGRect){.size = size} blendMode:kCGBlendModeCopy alpha:1];
-  uint8_t *data = (uint8_t *)CGBitmapContextGetData(ctx);
-
-  UIColor *color = [UIColor colorWithRed:data[2] / 255.0f
-                                   green:data[1] / 255.0f
-                                    blue:data[0] / 255.0f
-                                   alpha:1];
-  UIGraphicsEndImageContext();
+  CTDColorUtils *colorUtils = [[CTDColorUtils alloc] init];
+  color = [colorUtils getAverageColorFrom:image
+                                withAlpha:1.0];
 
   UIView *_accessoryView = MSHookIvar<UIView *>(self, "_accessoryView");
   if (_accessoryView != nil && [_accessoryView isKindOfClass: %c(SBIconBadgeView)])

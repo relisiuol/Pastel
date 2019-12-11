@@ -8,5 +8,6 @@ TWEAK_NAME = Pastel
 
 Pastel_FILES = Tweak.xm
 Pastel_CFLAGS = -fobjc-arc -fms-extensions
+Pastel_LIBRARIES += conorthedev
 
 include $(THEOS_MAKE_PATH)/tweak.mk
