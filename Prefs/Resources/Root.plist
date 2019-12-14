@@ -16,6 +16,10 @@
                 <string>#F2CBCE</string>
                 <string>#F2CBCE</string>
             </array>
+			<key>titleColor</key>
+			<string>#111111</string>
+			<key>subtitleColor</key>
+			<string>#444444</string>
         </dict>
 		<dict>
             <key>cellClass</key>
