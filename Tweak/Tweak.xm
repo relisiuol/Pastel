@@ -71,7 +71,6 @@ void reloadPrefs() {
 
 	NSLog(@"[Pastel] reloadPrefs (DEBUG) Current Enabled State: %i", kEnabled);
 	NSLog(@"[Pastel] reloadPrefs (DEBUG) Current Custom Color Enabled State: %i", kCustomColorEnabled);
-  NSLog(@"[Pastel] reloadPrefs (DEBUG) Current Custom Color: %@", kCustomColor);
 }
 
 %ctor {
