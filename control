@@ -1,6 +1,6 @@
 Package: me.conorthedev.pastel
 Name: Pastel
-Depends: mobilesubstrate, me.conorthedev.libconorthedev
+Depends: mobilesubstrate, me.conorthedev.libconorthedev, ws.hbang.common (>= 1.14)
 Version: 1.0
 Architecture: iphoneos-arm
 Description: Colourize your notification badges for free
