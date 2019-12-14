@@ -2,13 +2,13 @@ include $(THEOS)/makefiles/common.mk
 
 BUNDLE_NAME = PastelPrefs
 
-$(BUNDLE_NAME)_FILES = PastelPrefsRootListController.m
-$(BUNDLE_NAME)_INSTALL_PATH = /Library/PreferenceBundles
-$(BUNDLE_NAME)_FRAMEWORKS = UIKit
-$(BUNDLE_NAME)_PRIVATE_FRAMEWORKS = Preferences
-$(BUNDLE_NAME)_CFLAGS = -fobjc-arc
-$(BUNDLE_NAME)_EXTRA_FRAMEWORKS += Cephei CepheiPrefs
-$(BUNDLE_NAME)_LIBRARIES += sparkcolourpicker
+PastelPrefs_FILES = PastelPrefsRootListController.m
+PastelPrefs_INSTALL_PATH = /Library/PreferenceBundles
+PastelPrefs_LIBRARIES += sparkcolourpicker
+PastelPrefs_FRAMEWORKS = UIKit
+PastelPrefs_PRIVATE_FRAMEWORKS = Preferences
+PastelPrefs_CFLAGS = -fobjc-arc
+PastelPrefs_EXTRA_FRAMEWORKS += Cephei CepheiPrefs
 
 include $(THEOS_MAKE_PATH)/bundle.mk
 
