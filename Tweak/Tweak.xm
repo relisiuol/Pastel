@@ -27,7 +27,7 @@ HBPreferences *preferences;
 
   UIColor *color;
 
-  if(kCustomColorEnabled) {
+  if(!kCustomColorEnabled) {
     SBIconImageView *iconImageView = MSHookIvar<SBIconImageView *>(self, "_iconImageView");
     UIImage *image = [iconImageView contentsImage];
 
