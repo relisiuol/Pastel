@@ -6,8 +6,9 @@ include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = Pastel
 
-Pastel_FILES = Tweak.xm
-Pastel_CFLAGS = -fobjc-arc -fms-extensions
-Pastel_LIBRARIES += conorthedev
+$(TWEAK_NAME)_FILES = Tweak.xm
+$(TWEAK_NAME)_CFLAGS = -fobjc-arc -fms-extensions
+$(TWEAK_NAME)_LIBRARIES += conorthedev sparkcolourpicker
+$(TWEAK_NAME)_EXTRA_FRAMEWORKS += Cephei
 
 include $(THEOS_MAKE_PATH)/tweak.mk
