@@ -8,6 +8,7 @@ $(BUNDLE_NAME)_FRAMEWORKS = UIKit
 $(BUNDLE_NAME)_PRIVATE_FRAMEWORKS = Preferences
 $(BUNDLE_NAME)_CFLAGS = -fobjc-arc
 $(BUNDLE_NAME)_EXTRA_FRAMEWORKS += Cephei CepheiPrefs
+$(BUNDLE_NAME)_LIBRARIES += sparkcolourpicker
 
 include $(THEOS_MAKE_PATH)/bundle.mk
 

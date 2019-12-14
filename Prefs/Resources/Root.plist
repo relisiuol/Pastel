@@ -5,11 +5,18 @@
 	<key>items</key>
 	<array>
 		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>label</key>
-			<string>PastelPrefs First Page</string>
-		</dict>
+            <key>cell</key>
+            <string>PSGroupCell</string>
+            <key>headerCellClass</key>
+            <string>HBPackageNameHeaderCell</string>
+            <key>packageIdentifier</key>
+            <string>me.conorthedev.pastel</string>
+            <key>backgroundGradientColors</key>
+            <array>
+                <string>#F2CBCE</string>
+                <string>#F2CBCE</string>
+            </array>
+        </dict>
 		<dict>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
@@ -18,12 +25,53 @@
 			<key>defaults</key>
 			<string>me.conorthedev.pastel.prefs</string>
 			<key>key</key>
-			<string>AwesomeSwitch1</string>
+			<string>kEnabled</string>
 			<key>label</key>
-			<string>Awesome Switch 1</string>
+			<string>Enabled</string>
+		</dict>
+		<dict>
+            <key>cellClass</key>
+            <string>HBTwitterCell</string>
+            <key>label</key>
+            <string>Conor</string>
+            <key>user</key>
+            <string>ConorTheDev</string>
+        </dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>me.conorthedev.pastel.prefs</string>
+			<key>key</key>
+			<string>kCustomColorEnabled</string>
+			<key>label</key>
+			<string>Use Custom Color</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkCell</string>
+			<key>cellClass</key>
+			<string>SparkColourPickerCell</string>
+			<key>libsparkcolourpicker</key>
+			<dict>
+				<key>defaults</key>
+				<string>me.conorthedev.pastel.prefs</string>
+				<key>key</key>
+				<string>kCustomColor</string>
+				<key>fallback</key>
+				<string>#ffffff</string>
+				<key>alpha</key>
+				<true/>
+			</dict>
+			<key>label</key>
+			<string>Custom Colour</string>
+			<key>key</key>
+			<string>kCustomColor</string>
 		</dict>
 	</array>
 	<key>title</key>
-	<string>PastelPrefs</string>
+	<string>Pastel</string>
 </dict>
 </plist>
