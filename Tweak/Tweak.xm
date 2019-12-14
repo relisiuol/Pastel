@@ -1,10 +1,9 @@
 #import "Pastel.h"
-#import <Cephei/HBPreferences.h>
 #import "SparkColourPickerUtils.h"
+#import <Cephei/HBPreferences.h>
 
 BOOL kEnabled;
 BOOL kCustomColorEnabled;
-NSString *kCustomColor;
 HBPreferences *preferences;
 
 %hook SBIconBadgeView
@@ -27,15 +26,27 @@ HBPreferences *preferences;
 
   UIColor *color;
 
-  if(!kCustomColorEnabled) {
-    SBIconImageView *iconImageView = MSHookIvar<SBIconImageView *>(self, "_iconImageView");
-    UIImage *image = [iconImageView contentsImage];
-
-    CTDColorUtils *colorUtils = [[CTDColorUtils alloc] init];
-    color = [colorUtils getAverageColorFrom:image
-                                withAlpha:1.0];
+  if(!kEnabled) {
+    color = [UIColor redColor];
   } else {
-    color = [SparkColourPickerUtils colourWithString: kCustomColor withFallback: @"#ffffff"];
+      if(!kCustomColorEnabled) {
+        SBIconImageView *iconImageView = MSHookIvar<SBIconImageView *>(self, "_iconImageView");
+        UIImage *image = [iconImageView contentsImage];
+
+        CTDColorUtils *colorUtils = [[CTDColorUtils alloc] init];
+        color = [colorUtils getAverageColorFrom:image
+                                withAlpha:1.0];
+    } else {
+      NSString* colourString = NULL;
+      NSDictionary* preferencesDictionary = [NSDictionary dictionaryWithContentsOfFile: @"/var/mobile/Library/Preferences/me.conorthedev.pastel.colorprefs.plist"];
+
+      if(preferencesDictionary)
+      {
+          colourString = [preferencesDictionary objectForKey: @"kCustomColor"];
+      }
+
+      color = [SparkColourPickerUtils colourWithString: colourString withFallback: @"#ffffff"];
+    }
   }
 
   UIView *_accessoryView = MSHookIvar<UIView *>(self, "_accessoryView");
@@ -46,26 +57,25 @@ HBPreferences *preferences;
 %end
 
 void reloadPrefs() {
-	NSLog(@"[Pastel] (DEBUG) Reloading Preferences...");
+	NSLog(@"[Pastel] reloadPrefs (DEBUG) Reloading Preferences...");
 
 	preferences = [[HBPreferences alloc] initWithIdentifier:@"me.conorthedev.pastel.prefs"];
 
   [preferences registerDefaults:@{
         @"kEnabled": @YES,
-        @"kCustomColorEnabled": @NO,
-		    @"kCustomColor": @"#FFFFFF"
+        @"kCustomColorEnabled": @NO
   }];
 
 	[preferences registerBool:&kEnabled default:YES forKey:@"kEnabled"];
 	[preferences registerBool:&kCustomColorEnabled default:NO forKey:@"kCustomColorEnabled"];
-	[preferences registerObject:&kCustomColor default:@"#FFFFFF" forKey:@"kCustomColor"];
 
-	NSLog(@"[Pastel] (DEBUG) Current Enabled State: %i", kEnabled);
-	NSLog(@"[Pastel] (DEBUG) Current Custom Color Enabled State: %i", kCustomColorEnabled);
-	NSLog(@"[Pastel] (DEBUG) Current Custom Color: %@", kCustomColor);
+	NSLog(@"[Pastel] reloadPrefs (DEBUG) Current Enabled State: %i", kEnabled);
+	NSLog(@"[Pastel] reloadPrefs (DEBUG) Current Custom Color Enabled State: %i", kCustomColorEnabled);
+  NSLog(@"[Pastel] reloadPrefs (DEBUG) Current Custom Color: %@", kCustomColor);
 }
 
 %ctor {
 	reloadPrefs();
+  CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)reloadPrefs, CFSTR("me.conorthedev.pastel.prefs/ReloadPrefs"), NULL, kNilOptions);
   %init;
 }
