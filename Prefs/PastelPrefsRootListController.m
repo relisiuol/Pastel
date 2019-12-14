@@ -8,23 +8,6 @@
                   alpha:1.0];
 
 @implementation PastelPrefsRootListController
-@synthesize respringButton;
-
-- (instancetype)init {
-  self = [super init];
-
-  if (self) {
-    self.respringButton =
-        [[UIBarButtonItem alloc] initWithTitle:@"Respring"
-                                         style:UIBarButtonItemStylePlain
-                                        target:self
-                                        action:@selector(respring:)];
-    self.respringButton.tintColor = [UIColor redColor];
-    self.navigationItem.rightBarButtonItem = self.respringButton;
-  }
-
-  return self;
-}
 
 + (UIColor *)hb_tintColor {
   return THEME_COLOR;
@@ -56,11 +39,6 @@
 
 + (NSString *)hb_specifierPlist {
   return @"Root";
-}
-
-- (void)respring:(id)sender {
-  [HBRespringController
-      respringAndReturnTo:[NSURL URLWithString:@"prefs:root=Pastel"]];
 }
 
 @end
