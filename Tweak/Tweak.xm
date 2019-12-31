@@ -5,8 +5,51 @@
 BOOL kEnabled;
 BOOL kCustomColorEnabled;
 HBPreferences *preferences;
+NSMutableDictionary *iconDictionary = [[NSMutableDictionary alloc] init];
 
 %hook SBIconBadgeView
+
+-(void)configureForIcon:(SBApplicationIcon*)arg1 infoProvider:(SBIconView*)arg2 {
+  %orig;
+  SBIconImageView *iconImageView = MSHookIvar<SBIconImageView *>(arg2, "_iconImageView");
+  UIImage *image = [iconImageView contentsImage];
+
+  if(image && ![iconDictionary objectForKey:[self description]]) {
+    [iconDictionary setObject:UIImagePNGRepresentation(image) forKey:[self description]];
+  }
+}
+
+-(void)layoutSubviews {
+  %orig;
+  [self colourizeNotificationBadge];
+}
+
+%new
+-(void)colourizeNotificationBadge {
+  UIColor *color;
+
+  if(!kEnabled) {
+    color = [UIColor redColor];
+  } else {
+      if(!kCustomColorEnabled) {
+        CTDColorUtils *colorUtils = [[CTDColorUtils alloc] init];
+        color = [colorUtils getAverageColorFrom:[[UIImage alloc] initWithData:[iconDictionary objectForKey:[self description]]]
+                                withAlpha:1.0];
+      } else {
+        NSString* colourString = NULL;
+        NSDictionary* preferencesDictionary = [NSDictionary dictionaryWithContentsOfFile: @"/var/mobile/Library/Preferences/me.conorthedev.pastel.colorprefs.plist"];
+
+        if(preferencesDictionary)
+        {
+            colourString = [preferencesDictionary objectForKey: @"kCustomColor"];
+        }
+
+        color = [SparkColourPickerUtils colourWithString: colourString withFallback: @"#ffffff"];
+    }
+  }
+
+  [self setupPastelBadge:color];
+}
 
 // Used to set the badge color to any UIColor
 %new 
@@ -23,7 +66,11 @@ HBPreferences *preferences;
 
 -(void)drawRect:(CGRect)rect {
   %orig(rect);
+  [self colourizeNotificationBadge];
+}
 
+%new
+-(void)colourizeNotificationBadge {
   UIColor *color;
 
   if(!kEnabled) {
@@ -36,16 +83,16 @@ HBPreferences *preferences;
         CTDColorUtils *colorUtils = [[CTDColorUtils alloc] init];
         color = [colorUtils getAverageColorFrom:image
                                 withAlpha:1.0];
-    } else {
-      NSString* colourString = NULL;
-      NSDictionary* preferencesDictionary = [NSDictionary dictionaryWithContentsOfFile: @"/var/mobile/Library/Preferences/me.conorthedev.pastel.colorprefs.plist"];
+      } else {
+        NSString* colourString = NULL;
+        NSDictionary* preferencesDictionary = [NSDictionary dictionaryWithContentsOfFile: @"/var/mobile/Library/Preferences/me.conorthedev.pastel.colorprefs.plist"];
 
-      if(preferencesDictionary)
-      {
-          colourString = [preferencesDictionary objectForKey: @"kCustomColor"];
-      }
+        if(preferencesDictionary)
+        {
+            colourString = [preferencesDictionary objectForKey: @"kCustomColor"];
+        }
 
-      color = [SparkColourPickerUtils colourWithString: colourString withFallback: @"#ffffff"];
+        color = [SparkColourPickerUtils colourWithString: colourString withFallback: @"#ffffff"];
     }
   }
 
@@ -57,7 +104,7 @@ HBPreferences *preferences;
 %end
 
 void reloadPrefs() {
-	NSLog(@"[Pastel] reloadPrefs (DEBUG) Reloading Preferences...");
+	NSLog(@"[Pastel] (reloadPrefs) (DEBUG) Reloading Preferences...");
 
 	preferences = [[HBPreferences alloc] initWithIdentifier:@"me.conorthedev.pastel.prefs"];
 
@@ -69,12 +116,13 @@ void reloadPrefs() {
 	[preferences registerBool:&kEnabled default:YES forKey:@"kEnabled"];
 	[preferences registerBool:&kCustomColorEnabled default:NO forKey:@"kCustomColorEnabled"];
 
-	NSLog(@"[Pastel] reloadPrefs (DEBUG) Current Enabled State: %i", kEnabled);
-	NSLog(@"[Pastel] reloadPrefs (DEBUG) Current Custom Color Enabled State: %i", kCustomColorEnabled);
+	NSLog(@"[Pastel] (reloadPrefs) (DEBUG) Current Enabled State: %i", kEnabled);
+	NSLog(@"[Pastel] (reloadPrefs) (DEBUG) Current Custom Color Enabled State: %i", kCustomColorEnabled);
 }
 
 %ctor {
 	reloadPrefs();
   CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)reloadPrefs, CFSTR("me.conorthedev.pastel.prefs/ReloadPrefs"), NULL, kNilOptions);
+  
   %init;
 }
