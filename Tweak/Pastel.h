@@ -23,9 +23,9 @@
 @end
 
 @interface SBIconBadgeView : UIView
-@property(nonatomic, strong) SBIcon *icon;
-// Used to set the badge color to any UIColor
-- (void)setupPastelBadge:(UIColor *)badgeTintColor;
+@property(readonly) unsigned long long hash;
+
++ (id)_createImageForText:(id)arg1 font:(id)arg2 highlighted:(BOOL)arg3;
 
 // Used to set the badge color to the UIColor of the Icon's Image
 - (void)colourizeNotificationBadge;

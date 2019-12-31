@@ -14,9 +14,11 @@ NSMutableDictionary *iconDictionary = [[NSMutableDictionary alloc] init];
   SBIconImageView *iconImageView = MSHookIvar<SBIconImageView *>(arg2, "_iconImageView");
   UIImage *image = [iconImageView contentsImage];
 
-  if(image && ![iconDictionary objectForKey:[self description]]) {
-    [iconDictionary setObject:UIImagePNGRepresentation(image) forKey:[self description]];
+  if(image) {
+    [iconDictionary setObject:UIImagePNGRepresentation(image) forKey:[NSString stringWithFormat:@"%llu", self.hash]];
   }
+
+  [self colourizeNotificationBadge];
 }
 
 -(void)layoutSubviews {
@@ -24,48 +26,8 @@ NSMutableDictionary *iconDictionary = [[NSMutableDictionary alloc] init];
   [self colourizeNotificationBadge];
 }
 
-%new
--(void)colourizeNotificationBadge {
-  UIColor *color;
-
-  if(!kEnabled) {
-    color = [UIColor redColor];
-  } else {
-      if(!kCustomColorEnabled) {
-        CTDColorUtils *colorUtils = [[CTDColorUtils alloc] init];
-        color = [colorUtils getAverageColorFrom:[[UIImage alloc] initWithData:[iconDictionary objectForKey:[self description]]]
-                                withAlpha:1.0];
-      } else {
-        NSString* colourString = NULL;
-        NSDictionary* preferencesDictionary = [NSDictionary dictionaryWithContentsOfFile: @"/var/mobile/Library/Preferences/me.conorthedev.pastel.colorprefs.plist"];
-
-        if(preferencesDictionary)
-        {
-            colourString = [preferencesDictionary objectForKey: @"kCustomColor"];
-        }
-
-        color = [SparkColourPickerUtils colourWithString: colourString withFallback: @"#ffffff"];
-    }
-  }
-
-  [self setupPastelBadge:color];
-}
-
-// Used to set the badge color to any UIColor
-%new 
--(void)setupPastelBadge:(UIColor *)badgeTintColor {
-  UIImageView *accessoryImage = MSHookIvar<UIImageView *>(self, "_backgroundView");
-  accessoryImage.image = [accessoryImage.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
-
-  [accessoryImage setTintColor:badgeTintColor];
-}
-
-%end
-
-%hook SBIconView
-
--(void)drawRect:(CGRect)rect {
-  %orig(rect);
+-(void)drawRect:(CGRect)arg1 {
+  %orig(arg1);
   [self colourizeNotificationBadge];
 }
 
@@ -74,31 +36,32 @@ NSMutableDictionary *iconDictionary = [[NSMutableDictionary alloc] init];
   UIColor *color;
 
   if(!kEnabled) {
-    color = [UIColor redColor];
+    color = [UIColor systemRedColor];
   } else {
-      if(!kCustomColorEnabled) {
-        SBIconImageView *iconImageView = MSHookIvar<SBIconImageView *>(self, "_iconImageView");
-        UIImage *image = [iconImageView contentsImage];
+    if(!kCustomColorEnabled) {
+      NSData *data = [iconDictionary objectForKey:[NSString stringWithFormat:@"%llu", self.hash]];
 
-        CTDColorUtils *colorUtils = [[CTDColorUtils alloc] init];
-        color = [colorUtils getAverageColorFrom:image
-                                withAlpha:1.0];
+      if(data) {
+        color = [[[CTDColorUtils alloc] init] getAverageColorFrom:[[UIImage alloc] initWithData:data] withAlpha:1.0];
       } else {
-        NSString* colourString = NULL;
-        NSDictionary* preferencesDictionary = [NSDictionary dictionaryWithContentsOfFile: @"/var/mobile/Library/Preferences/me.conorthedev.pastel.colorprefs.plist"];
+        color = [UIColor redColor];
+      }
+    } else {
+      NSString* colourString = NULL;
+      NSDictionary* preferencesDictionary = [NSDictionary dictionaryWithContentsOfFile: @"/var/mobile/Library/Preferences/me.conorthedev.pastel.colorprefs.plist"];
 
-        if(preferencesDictionary)
-        {
-            colourString = [preferencesDictionary objectForKey: @"kCustomColor"];
-        }
+      if(preferencesDictionary) {
+          colourString = [preferencesDictionary objectForKey: @"kCustomColor"];
+      }
 
-        color = [SparkColourPickerUtils colourWithString: colourString withFallback: @"#ffffff"];
+      color = [SparkColourPickerUtils colourWithString:colourString withFallback:@"#ffffff"];
     }
   }
 
-  UIView *_accessoryView = MSHookIvar<UIView *>(self, "_accessoryView");
-  if (_accessoryView != nil && [_accessoryView isKindOfClass: %c(SBIconBadgeView)])
-    [(SBIconBadgeView *)_accessoryView setupPastelBadge:color];
+  UIImageView *accessoryImage = MSHookIvar<UIImageView *>(self, "_backgroundView");
+  accessoryImage.image = [accessoryImage.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+
+  [accessoryImage setTintColor:color];
 }
 
 %end
