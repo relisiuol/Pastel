@@ -59,7 +59,21 @@
 			<key>key</key>
 			<string>kCustomColorEnabled</string>
 			<key>label</key>
-			<string>Use Custom Color</string>
+			<string>Use Custom Badge Color</string>
+			<key>PostNotification</key>
+	        <string>me.conorthedev.pastel.prefs/ReloadPrefs</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>me.conorthedev.pastel.prefs</string>
+			<key>key</key>
+			<string>kCustomTextColorEnabled</string>
+			<key>label</key>
+			<string>Use Custom Text Color</string>
 			<key>PostNotification</key>
 	        <string>me.conorthedev.pastel.prefs/ReloadPrefs</string>
 		</dict>
@@ -80,9 +94,30 @@
 				<true/>
 			</dict>
 			<key>label</key>
-			<string>Custom Colour</string>
+			<string>Custom Badge Colour</string>
 			<key>key</key>
 			<string>kCustomColor</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkCell</string>
+			<key>cellClass</key>
+			<string>SparkColourPickerCell</string>
+			<key>libsparkcolourpicker</key>
+			<dict>
+				<key>defaults</key>
+				<string>me.conorthedev.pastel.colorprefs</string>
+				<key>key</key>
+				<string>kCustomTextColor</string>
+				<key>fallback</key>
+				<string>#FFFFFF</string>
+				<key>alpha</key>
+				<true/>
+			</dict>
+			<key>label</key>
+			<string>Custom Text Colour</string>
+			<key>key</key>
+			<string>kCustomTextColor</string>
 		</dict>
 	</array>
 	<key>title</key>
