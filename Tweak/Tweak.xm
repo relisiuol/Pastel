@@ -4,6 +4,8 @@
 
 BOOL kEnabled;
 BOOL kCustomColorEnabled;
+BOOL kCustomTextColorEnabled;
+
 HBPreferences *preferences;
 NSMutableDictionary *iconDictionary = [[NSMutableDictionary alloc] init];
 
@@ -34,6 +36,16 @@ NSMutableDictionary *iconDictionary = [[NSMutableDictionary alloc] init];
 %new
 -(void)colourizeNotificationBadge {
   UIColor *color;
+  NSString* colourString = NULL;
+  NSString* textColourString = NULL;
+  NSDictionary* preferencesDictionary = [NSDictionary dictionaryWithContentsOfFile: @"/var/mobile/Library/Preferences/me.conorthedev.pastel.colorprefs.plist"];
+
+  if(preferencesDictionary) {
+      colourString = [preferencesDictionary objectForKey:@"kCustomColor"];
+      textColourString = [preferencesDictionary objectForKey:@"kCustomTextColor"];
+  }
+
+  UIColor *textColor = [UIColor whiteColor];
 
   if(!kEnabled) {
     color = [UIColor systemRedColor];
@@ -44,24 +56,28 @@ NSMutableDictionary *iconDictionary = [[NSMutableDictionary alloc] init];
       if(data) {
         color = [[[CTDColorUtils alloc] init] getAverageColorFrom:[[UIImage alloc] initWithData:data] withAlpha:1.0];
       } else {
-        color = [UIColor redColor];
+        color = [UIColor systemRedColor];
       }
     } else {
-      NSString* colourString = NULL;
-      NSDictionary* preferencesDictionary = [NSDictionary dictionaryWithContentsOfFile: @"/var/mobile/Library/Preferences/me.conorthedev.pastel.colorprefs.plist"];
-
-      if(preferencesDictionary) {
-          colourString = [preferencesDictionary objectForKey: @"kCustomColor"];
-      }
-
       color = [SparkColourPickerUtils colourWithString:colourString withFallback:@"#ffffff"];
     }
   }
 
-  UIImageView *accessoryImage = MSHookIvar<UIImageView *>(self, "_backgroundView");
-  accessoryImage.image = [accessoryImage.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+  if(!kCustomTextColorEnabled) {
+    if(color == [UIColor blackColor]) {
+      textColor = [UIColor whiteColor];
+    }
+  } else {
+    textColor = [SparkColourPickerUtils colourWithString:textColourString withFallback:@"#FFFFFF"];
+  }
 
-  [accessoryImage setTintColor:color];
+  UIImageView *textView = MSHookIvar<UIImageView *>(self, "_textView");
+  textView.image = [textView.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+  [textView setTintColor:textColor];
+
+  UIImageView *backgroundView = MSHookIvar<UIImageView *>(self, "_backgroundView");
+  backgroundView.image = [backgroundView.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+  [backgroundView setTintColor:color];
 }
 
 %end
@@ -73,14 +89,17 @@ void reloadPrefs() {
 
   [preferences registerDefaults:@{
         @"kEnabled": @YES,
-        @"kCustomColorEnabled": @NO
+        @"kCustomColorEnabled": @NO,
+        @"kCustomTextColorEnabled": @NO
   }];
 
 	[preferences registerBool:&kEnabled default:YES forKey:@"kEnabled"];
 	[preferences registerBool:&kCustomColorEnabled default:NO forKey:@"kCustomColorEnabled"];
+	[preferences registerBool:&kCustomTextColorEnabled default:NO forKey:@"kCustomTextColorEnabled"];
 
 	NSLog(@"[Pastel] (reloadPrefs) (DEBUG) Current Enabled State: %i", kEnabled);
 	NSLog(@"[Pastel] (reloadPrefs) (DEBUG) Current Custom Color Enabled State: %i", kCustomColorEnabled);
+  NSLog(@"[Pastel] (reloadPrefs) (DEBUG) Current Custom Text Color Enabled State: %i", kCustomTextColorEnabled);
 }
 
 %ctor {
