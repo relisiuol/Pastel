@@ -19,21 +19,16 @@ NSDictionary* colourPreferencesDictionary;
   %orig;
 
   if([arg2 isKindOfClass:%c(SBForceTouchAppIconInfoProvider)]) {
-    // Set the colour to red as arg2 doesn't have the _iconImageView ivar
+    // Set the colour to red
     [colourCache setObject:[NSKeyedArchiver archivedDataWithRootObject:[UIColor systemRedColor] requiringSecureCoding:NO error:nil] forKey:[NSString stringWithFormat:@"%llu", self.hash]];
   } else {
-    if([arg1 isKindOfClass:%c(SBFolderIcon)]) {
-      // Set the colour to red
-      [colourCache setObject:[NSKeyedArchiver archivedDataWithRootObject:[UIColor systemRedColor] requiringSecureCoding:NO error:nil] forKey:[NSString stringWithFormat:@"%llu", self.hash]];
-    } else {
-      // Get the icon from the image view
-      SBIconImageView *iconImageView = MSHookIvar<SBIconImageView *>(arg2, "_iconImageView");
-      UIImage *image = [iconImageView contentsImage];
+    // Get the icon from the image view
+    SBIconImageView *iconImageView = MSHookIvar<SBIconImageView *>(arg2, "_iconImageView");
+    UIImage *image = [iconImageView contentsImage];
 
-      if(image) {
-        // Put the average colour in the colour dictionary
-        [colourCache setObject:[NSKeyedArchiver archivedDataWithRootObject:[[[CTDColorUtils alloc] init] getAverageColorFrom:image withAlpha:1.0] requiringSecureCoding:NO error:nil] forKey:[NSString stringWithFormat:@"%llu", self.hash]];
-      }
+    if(image) {
+      // Put the average colour in the colour dictionary
+      [colourCache setObject:[NSKeyedArchiver archivedDataWithRootObject:[[[CTDColorUtils alloc] init] getAverageColorFrom:image withAlpha:1.0] requiringSecureCoding:NO error:nil] forKey:[NSString stringWithFormat:@"%llu", self.hash]];
     }
   }
 
@@ -43,6 +38,12 @@ NSDictionary* colourPreferencesDictionary;
 
 - (void)layoutSubviews {
   %orig;
+  // Add our colour to the badge
+  [self colourizeNotificationBadge];
+}
+
+- (void)drawRect:(CGRect)rect {
+  %orig(rect);
   // Add our colour to the badge
   [self colourizeNotificationBadge];
 }
@@ -60,7 +61,7 @@ NSDictionary* colourPreferencesDictionary;
     // If the tweak is disabled, use the system red colour as the colour
     color = [UIColor systemRedColor];
   } else {
-    // Load preferences
+    // Set the variables from preferences
     if(colourPreferencesDictionary) {
       colourString = [colourPreferencesDictionary objectForKey:@"kCustomColor"];
       textColourString = [colourPreferencesDictionary objectForKey:@"kCustomTextColor"];
@@ -162,6 +163,9 @@ NSDictionary* colourPreferencesDictionary;
 void reloadPrefs() {
 	NSLog(@"[Pastel] (DEBUG) Reloading Preferences...");
 
+  // Reload the colour preferences dictionary if not already set
+  colourPreferencesDictionary = [NSDictionary dictionaryWithContentsOfFile: @"/var/mobile/Library/Preferences/me.conorthedev.pastel.colorprefs.plist"];
+
   // Set the preferences variable
   if(!preferences)
 	  preferences = [[HBPreferences alloc] initWithIdentifier:@"me.conorthedev.pastel.prefs"];
@@ -192,7 +196,6 @@ void reloadPrefs() {
   CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)reloadPrefs, CFSTR("me.conorthedev.pastel.prefs/ReloadPrefs"), NULL, kNilOptions);
   
   colourCache = [[NSMutableDictionary alloc] init];
-  colourPreferencesDictionary = [NSDictionary dictionaryWithContentsOfFile: @"/var/mobile/Library/Preferences/me.conorthedev.pastel.colorprefs.plist"];
   
   %init(badges);
   %init(notifications)

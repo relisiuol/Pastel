@@ -106,6 +106,8 @@
 				<string>#ffffff</string>
 				<key>alpha</key>
 				<true/>
+				<key>PostNotification</key>
+	        	<string>me.conorthedev.pastel.prefs/ReloadPrefs</string>
 			</dict>
 			<key>label</key>
 			<string>Custom Badge Colour</string>
@@ -127,6 +129,8 @@
 				<string>#FFFFFF</string>
 				<key>alpha</key>
 				<true/>
+				<key>PostNotification</key>
+	        	<string>me.conorthedev.pastel.prefs/ReloadPrefs</string>
 			</dict>
 			<key>label</key>
 			<string>Custom Text Colour</string>
