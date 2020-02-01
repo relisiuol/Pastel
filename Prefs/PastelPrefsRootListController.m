@@ -16,8 +16,13 @@
     HBAppearanceSettings *appearanceSettings =
         [[HBAppearanceSettings alloc] init];
 
-    appearanceSettings.tintColor = THEME_COLOR;
     appearanceSettings.tableViewCellSeparatorColor = [UIColor clearColor];
+    appearanceSettings.navigationBarTintColor = [UIColor blackColor];
+    appearanceSettings.navigationBarTitleColor = [UIColor blackColor];
+    appearanceSettings.statusBarTintColor = [UIColor blackColor];
+    appearanceSettings.tintColor = THEME_COLOR;
+    appearanceSettings.navigationBarBackgroundColor = THEME_COLOR;
+    appearanceSettings.translucentNavigationBar = NO;
 
     self.hb_appearanceSettings = appearanceSettings;
   }
@@ -32,7 +37,17 @@
     self.navigationController.navigationBar.prefersLargeTitles = false;
     self.navigationController.navigationItem.largeTitleDisplayMode =
         UINavigationItemLargeTitleDisplayModeNever;
+    self.navigationController.navigationBar.layer.shadowOpacity = 0;
   }
+
+  UIImageView *iconView = [[UIImageView alloc]
+      initWithImage:
+          [UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/"
+                                           @"PastelPrefs.bundle/icon@3x.png"]];
+  iconView.contentMode = UIViewContentModeScaleAspectFit;
+  iconView.translatesAutoresizingMaskIntoConstraints = NO;
+  iconView.alpha = 1.0;
+  self.navigationController.navigationItem.titleView = iconView;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -42,6 +57,7 @@
     self.navigationController.navigationBar.prefersLargeTitles = false;
     self.navigationController.navigationItem.largeTitleDisplayMode =
         UINavigationItemLargeTitleDisplayModeNever;
+    self.navigationController.navigationBar.layer.shadowOpacity = 0;
   }
 }
 
