@@ -141,7 +141,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Banner Configuration</string>
+			<string>Notification Configuration</string>
 		</dict>
 		<dict>
 			<key>cell</key>
