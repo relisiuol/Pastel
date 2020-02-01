@@ -19,7 +19,7 @@ NSDictionary* colourPreferencesDictionary;
 - (void)configureForIcon:(SBApplicationIcon*)arg1 infoProvider:(SBIconView*)arg2 {
   %orig;
 
-  if([arg2 isKindOfClass:%c(SBForceTouchAppIconInfoProvider)]) {
+  if([arg1 isKindOfClass:%c(SBFolderIcon)] || [arg2 isKindOfClass:%c(SBForceTouchAppIconInfoProvider)]) {
     // Set the colour to red
     [colourCache setObject:[NSKeyedArchiver archivedDataWithRootObject:[UIColor systemRedColor] requiringSecureCoding:NO error:nil] forKey:[NSString stringWithFormat:@"%llu", self.hash]];
   } else {
@@ -116,6 +116,13 @@ NSDictionary* colourPreferencesDictionary;
 
 %group notifications
 %hook MTMaterialView
+
+// Corner radius fix on iOS 12
+-(CALayer*)layer {
+  CALayer *original = %orig;
+  original.cornerRadius = 13;
+  return original;
+}
 
 %new
 - (void)applyColour:(UIColor*)colour {
