@@ -1,9 +1,9 @@
 Package: me.conorthedev.pastel
 Name: Pastel
-Depends: mobilesubstrate, preferenceloader, me.conorthedev.libconorthedev, ws.hbang.common (>= 1.14), com.spark.libsparkcolourpicker
+Depends: mobilesubstrate, preferenceloader, me.conorthedev.libconorthedev, ws.hbang.common (>= 1.14), com.spark.libsparkcolourpicker, firmware (>= 11.0)
 Version: 1.1
 Architecture: iphoneos-arm
 Description: Colourize your notification badges for free
 Maintainer: ConorTheDev <con0r.b@protonmail.com>
-Author: ConorTheDev <con0r.b@protonmail.com>
+Author: ConorTheDev <con0r.b@protonmail.com>    
 Section: Tweaks
