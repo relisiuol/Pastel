@@ -122,9 +122,9 @@ NSDictionary* colourPreferencesDictionary;
   if (!self || !colour) return;
 
   // Set the background colour
-  //self.clipsToBounds = YES;
+  self.clipsToBounds = YES;
   self.backgroundColor = colour;
-  //self.layer.cornerRadius = 13;
+  self.layer.cornerRadius = 13;
 }
 
 %new
@@ -132,9 +132,9 @@ NSDictionary* colourPreferencesDictionary;
   if (!self) return;
 
   // Reset the background colour
-  //self.clipsToBounds = YES;
+  self.clipsToBounds = YES;
   self.backgroundColor = nil;
-  //self.layer.cornerRadius = 13;
+  self.layer.cornerRadius = 13;
 }
 
 %end
@@ -144,20 +144,24 @@ NSDictionary* colourPreferencesDictionary;
   %orig;
   if (!self) return;
 
-  if(!kEnabled && !kNotificationBannerEnabled) return;
+  if(kEnabled && kNotificationBannerEnabled) {
+    NCNotificationListCell *cell = (NCNotificationListCell *)self.superview.superview.superview;
+    NCNotificationViewController *contentViewController = cell.contentViewController;
+    NCNotificationShortLookViewController *shortlookViewContoller = (NCNotificationShortLookViewController*)contentViewController;
+    NCNotificationViewControllerView *view = (NCNotificationViewControllerView*) shortlookViewContoller.view;
+    NCNotificationShortLookView *shortlookView = (NCNotificationShortLookView*) view.contentView;
 
-  NCNotificationListCell *cell = (NCNotificationListCell *)self.superview.superview.superview;
-  NCNotificationViewController *contentViewController = cell.contentViewController;
-  NCNotificationShortLookViewController *shortlookViewContoller = (NCNotificationShortLookViewController*)contentViewController;
-  NCNotificationViewControllerView *view = (NCNotificationViewControllerView*) shortlookViewContoller.view;
-  NCNotificationShortLookView *shortlookView = (NCNotificationShortLookView*) view.contentView;
+    // Get the background colour
+    UIButton *iconButton = [shortlookView.iconButtons objectAtIndex:0];
+    UIColor *color = [[[CTDColorUtils alloc] init] getAverageColorFrom:iconButton.currentImage withAlpha:1.0];
 
-  // Get the background colour
-  UIButton *iconButton = [shortlookView.iconButtons objectAtIndex:0];
-  UIColor *color = [[[CTDColorUtils alloc] init] getAverageColorFrom:iconButton.currentImage withAlpha:1.0];
-
-  for (NCNotificationListCellActionButton *button in self.buttonsStackView.arrangedSubviews) {
-    [((MTMaterialView *)button.backgroundView) applyColour:color];
+    for (NCNotificationListCellActionButton *button in self.buttonsStackView.arrangedSubviews) {
+      [((MTMaterialView *)button.backgroundView) applyColour:color];
+    }
+  } else {
+    for (NCNotificationListCellActionButton *button in self.buttonsStackView.arrangedSubviews) {
+      [((MTMaterialView *)button.backgroundView) resetColour];
+    }
   }
 }
 
