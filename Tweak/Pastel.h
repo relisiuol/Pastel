@@ -11,6 +11,32 @@
 @property(nonatomic, copy) NSArray *iconButtons;
 @end
 
+@interface NCNotificationViewController : UIViewController
+@end
+
+@interface NCNotificationListCellActionButton : UIControl
+@property(nonatomic, retain) MTMaterialView *backgroundView;
+@end
+
+@interface NCNotificationListCellActionButtonsView : UIView
+@property(nonatomic, retain) UIStackView *buttonsStackView;
+@end
+
+@class PLPlatterView;
+@interface NCNotificationViewControllerView : UIView
+@property(assign, nonatomic) PLPlatterView *contentView;
+@end
+
+@interface NCNotificationShortLookViewController : UIViewController
+@end
+
+@interface NCNotificationListCell : UICollectionViewCell
+@property(nonatomic, retain)
+    NCNotificationViewController *contentViewController;
+@property(nonatomic, retain)
+    NCNotificationListCellActionButtonsView *leftActionButtonsView;
+@end
+
 @interface SBIconImageView : UIView
 - (id)contentsImage;
 @end
