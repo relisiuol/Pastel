@@ -6,7 +6,7 @@ Developed by [ConorTheDev](https://twitter.com/ConorTheDev)
 
 ## Supported Devices
 
-TBD: iOS 12 - 13 tested so far
+All devices on iOS 11 -> 13 are supported
 
 ## Dependencies
 - [libSparkColorPicker](https://sparkdev.me/repo)
