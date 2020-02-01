@@ -153,15 +153,55 @@ NSDictionary* colourPreferencesDictionary;
 
     // Get the background colour
     UIButton *iconButton = [shortlookView.iconButtons objectAtIndex:0];
-    UIColor *color = [[[CTDColorUtils alloc] init] getAverageColorFrom:iconButton.currentImage withAlpha:1.0];
+    UIColor *colour = [[[CTDColorUtils alloc] init] getAverageColorFrom:iconButton.currentImage withAlpha:1.0];
+
+    if(kCustomNotificationBgColourEnabled) {
+      NSString *colourString = NULL;
+      if(colourPreferencesDictionary) {
+        colourString = [colourPreferencesDictionary objectForKey:@"kCustomNotificationBgColour"];
+      }
+
+      if(colourString) {
+        colour = [SparkColourPickerUtils colourWithString:colourString withFallback:@"#ffffff"];
+      }
+    }
 
     for (NCNotificationListCellActionButton *button in self.buttonsStackView.arrangedSubviews) {
-      [((MTMaterialView *)button.backgroundView) applyColour:color];
+      [((MTMaterialView *)button.backgroundView) applyColour:colour];
     }
   } else {
     for (NCNotificationListCellActionButton *button in self.buttonsStackView.arrangedSubviews) {
       [((MTMaterialView *)button.backgroundView) resetColour];
     }
+  }
+}
+
+%end
+
+%hook NCNotificationLongLookView
+- (void)drawRect:(CGRect)rect {
+  %orig(rect);
+
+  if(kEnabled && kNotificationBannerEnabled) {
+    UIButton *iconButton = [self.iconButtons objectAtIndex:0];
+    UIView *headerContentView = MSHookIvar<UIView *>(self, "_headerContentView");
+    UIView *notificationContentView = MSHookIvar<UIView *>(self, "_notificationContentView");
+    
+    UIColor *colour = [[[CTDColorUtils alloc] init] getAverageColorFrom:iconButton.currentImage withAlpha:1.0];
+
+    if(kCustomNotificationBgColourEnabled) {
+      NSString *colourString = NULL;
+      if(colourPreferencesDictionary) {
+        colourString = [colourPreferencesDictionary objectForKey:@"kCustomNotificationBgColour"];
+      }
+
+      if(colourString) {
+        colour = [SparkColourPickerUtils colourWithString:colourString withFallback:@"#ffffff"];
+      }
+    }
+
+    [headerContentView setBackgroundColor:colour];
+    [notificationContentView setBackgroundColor:colour];
   }
 }
 

@@ -11,6 +11,11 @@
 @property(nonatomic, copy) NSArray *iconButtons;
 @end
 
+@interface NCNotificationLongLookView : UIView
+@property(nonatomic, copy) NSArray *iconButtons;
+@property(nonatomic, copy) UIView *customContentView;
+@end
+
 @interface NCNotificationViewController : UIViewController
 @end
 
