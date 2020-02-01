@@ -9,12 +9,20 @@
 
 @implementation PastelPrefsRootListController
 
-+ (UIColor *)hb_tintColor {
-  return THEME_COLOR;
-}
+- (instancetype)init {
+  self = [super init];
 
-- (void)loadView {
-  [super loadView];
+  if (self) {
+    HBAppearanceSettings *appearanceSettings =
+        [[HBAppearanceSettings alloc] init];
+
+    appearanceSettings.tintColor = THEME_COLOR;
+    appearanceSettings.tableViewCellSeparatorColor = [UIColor clearColor];
+
+    self.hb_appearanceSettings = appearanceSettings;
+  }
+
+  return self;
 }
 
 - (void)viewDidLoad {
@@ -37,8 +45,11 @@
   }
 }
 
-+ (NSString *)hb_specifierPlist {
-  return @"Root";
+- (id)specifiers {
+  if (_specifiers == nil) {
+    _specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
+  }
+  return _specifiers;
 }
 
 @end
