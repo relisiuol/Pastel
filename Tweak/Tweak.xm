@@ -7,6 +7,7 @@ BOOL kCustomColorEnabled;
 BOOL kCustomTextColorEnabled;
 BOOL kNotificationBannerEnabled;
 BOOL kNotificationBadgeEnabled;
+BOOL kCustomNotificationBgColourEnabled;
 
 HBPreferences *preferences;
 NSMutableDictionary *colourCache;
@@ -144,11 +145,22 @@ NSDictionary* colourPreferencesDictionary;
     // Check if the current subview is MTMaterialView (the blurred background view)
     if ([subview isKindOfClass:%c(MTMaterialView)]) {
       if(kNotificationBannerEnabled && kEnabled) {
-        // Get the button that contains the icon image
-        UIButton *iconButton = [self.iconButtons objectAtIndex:0];
+        if(kCustomNotificationBgColourEnabled) {
+          NSString *colourString = NULL;
+          if(colourPreferencesDictionary) {
+            colourString = [colourPreferencesDictionary objectForKey:@"kCustomNotificationBgColour"];
+          }
 
-        // Set the material view background colour to the average colour of the button's icon
-        [((MTMaterialView *)subview) applyColour:[[[CTDColorUtils alloc] init] getAverageColorFrom:iconButton.currentImage withAlpha:1.0]];
+          if(colourString) {
+            [((MTMaterialView *)subview) applyColour:[SparkColourPickerUtils colourWithString:colourString withFallback:@"#ffffff"]];
+          }
+        } else {
+          // Get the button that contains the icon image
+          UIButton *iconButton = [self.iconButtons objectAtIndex:0];
+
+          // Set the material view background colour to the average colour of the button's icon
+          [((MTMaterialView *)subview) applyColour:[[[CTDColorUtils alloc] init] getAverageColorFrom:iconButton.currentImage withAlpha:1.0]];
+        }
       } else {
         // Tweak was enabled / disabled, reset the colour
         [((MTMaterialView *)subview) resetColour];
@@ -175,6 +187,7 @@ void reloadPrefs() {
         @"kEnabled": @YES,
         @"kNotificationBannerEnabled": @YES,
         @"kNotificationBadgeEnabled": @YES,
+        @"kCustomNotificationBgColourEnabled": @NO,
         @"kCustomColorEnabled": @NO,
         @"kCustomTextColorEnabled": @NO
   }];
@@ -185,10 +198,14 @@ void reloadPrefs() {
   [preferences registerBool:&kNotificationBadgeEnabled default:YES forKey:@"kNotificationBadgeEnabled"];
 	[preferences registerBool:&kCustomColorEnabled default:NO forKey:@"kCustomColorEnabled"];
 	[preferences registerBool:&kCustomTextColorEnabled default:NO forKey:@"kCustomTextColorEnabled"];
+  [preferences registerBool:&kCustomNotificationBgColourEnabled default:NO forKey:@"kCustomNotificationBgColourEnabled"];
 
 	NSLog(@"[Pastel] (DEBUG) Current Enabled State: %i", kEnabled);
-	NSLog(@"[Pastel] (DEBUG) Current Custom Color Enabled State: %i", kCustomColorEnabled);
-  NSLog(@"[Pastel] (DEBUG) Current Custom Text Color Enabled State: %i", kCustomTextColorEnabled);
+  NSLog(@"[Pastel] (DEBUG) Current Notification Banner Enabled State: %i", kNotificationBannerEnabled);
+  NSLog(@"[Pastel] (DEBUG) Current Notification Badge Enabled State: %i", kNotificationBadgeEnabled);
+	NSLog(@"[Pastel] (DEBUG) Current Custom Badge Color Enabled State: %i", kCustomColorEnabled);
+  NSLog(@"[Pastel] (DEBUG) Current Custom Badge Text Color Enabled State: %i", kCustomTextColorEnabled);
+  NSLog(@"[Pastel] (DEBUG) Current Custom Notification Background Color Enabled State: %i", kCustomNotificationBgColourEnabled);
 }
 
 %ctor {
