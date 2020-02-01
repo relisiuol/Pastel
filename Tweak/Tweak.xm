@@ -117,13 +117,6 @@ NSDictionary* colourPreferencesDictionary;
 %group notifications
 %hook MTMaterialView
 
-// Corner radius fix on iOS 12
--(CALayer*)layer {
-  CALayer *original = %orig;
-  original.cornerRadius = 13;
-  return original;
-}
-
 %new
 - (void)applyColour:(UIColor*)colour {
   if (!self || !colour) return;
@@ -131,6 +124,7 @@ NSDictionary* colourPreferencesDictionary;
   // Set the background colour
   self.clipsToBounds = YES;
   self.backgroundColor = colour;
+  self.layer.cornerRadius = 13;
 }
 
 %new
@@ -140,6 +134,7 @@ NSDictionary* colourPreferencesDictionary;
   // Reset the background colour
   self.clipsToBounds = YES;
   self.backgroundColor = nil;
+  self.layer.cornerRadius = 13;
 }
 
 %end
