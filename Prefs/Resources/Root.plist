@@ -30,12 +30,6 @@
             <string>ConorTheDev</string>
         </dict>
 		<dict>
-		<key>cell</key>
-		<string>PSGroupCell</string>
-		<key>label</key>
-		<string>Configuration</string>
-		</dict>
-		<dict>
 			<key>cell</key>
 			<string>PSSwitchCell</string>
 			<key>default</key>
@@ -46,6 +40,26 @@
 			<string>kEnabled</string>
 			<key>label</key>
 			<string>Enabled</string>
+			<key>PostNotification</key>
+	        <string>me.conorthedev.pastel.prefs/ReloadPrefs</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Badge Configuration</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>me.conorthedev.pastel.prefs</string>
+			<key>key</key>
+			<string>kNotificationBadgeEnabled</string>
+			<key>label</key>
+			<string>Colourize Notification Badges</string>
 			<key>PostNotification</key>
 	        <string>me.conorthedev.pastel.prefs/ReloadPrefs</string>
 		</dict>
@@ -118,6 +132,26 @@
 			<string>Custom Text Colour</string>
 			<key>key</key>
 			<string>kCustomTextColor</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Banner Configuration</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>me.conorthedev.pastel.prefs</string>
+			<key>key</key>
+			<string>kNotificationBannerEnabled</string>
+			<key>label</key>
+			<string>Colourize Notification Banners</string>
+			<key>PostNotification</key>
+	        <string>me.conorthedev.pastel.prefs/ReloadPrefs</string>
 		</dict>
 	</array>
 	<key>title</key>

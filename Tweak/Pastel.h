@@ -1,11 +1,23 @@
 #import <ConorTheDev/libconorthedev.h>
 #import <UIKit/UIKit.h>
 
+@interface MTMaterialView : UIView
+@property(nonatomic, retain) NSString *groupNameBase;
+- (void)applyColour:(UIColor *)colour;
+- (void)resetColour;
+@end
+
+@interface NCNotificationShortLookView : UIView
+@property(nonatomic, copy) NSArray *iconButtons;
+@end
+
 @interface SBIconImageView : UIView
 - (id)contentsImage;
 @end
 
+@class SBFolder;
 @interface SBIcon : NSObject
+@property(nonatomic, retain) SBFolder *folder;
 @end
 
 @interface SBLeafIcon : SBIcon
