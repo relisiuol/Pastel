@@ -71,6 +71,20 @@
 			<key>defaults</key>
 			<string>me.conorthedev.pastel.prefs</string>
 			<key>key</key>
+			<string>kBadgeBorderColorEnabled</string>
+			<key>label</key>
+			<string>Use Badge Border Color</string>
+			<key>PostNotification</key>
+	        <string>me.conorthedev.pastel.prefs/ReloadPrefs</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>me.conorthedev.pastel.prefs</string>
+			<key>key</key>
 			<string>kCustomColorEnabled</string>
 			<key>label</key>
 			<string>Use Custom Badge Color</string>
@@ -88,6 +102,20 @@
 			<string>kCustomTextColorEnabled</string>
 			<key>label</key>
 			<string>Use Custom Text Color</string>
+			<key>PostNotification</key>
+	        <string>me.conorthedev.pastel.prefs/ReloadPrefs</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSSwitchCell</string>
+			<key>default</key>
+			<false/>
+			<key>defaults</key>
+			<string>me.conorthedev.pastel.prefs</string>
+			<key>key</key>
+			<string>kCustomBadgeBorderColorEnabled</string>
+			<key>label</key>
+			<string>Use Custom Border Color</string>
 			<key>PostNotification</key>
 	        <string>me.conorthedev.pastel.prefs/ReloadPrefs</string>
 		</dict>
@@ -136,6 +164,29 @@
 			<string>Custom Text Colour</string>
 			<key>key</key>
 			<string>kCustomTextColor</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSLinkCell</string>
+			<key>cellClass</key>
+			<string>SparkColourPickerCell</string>
+			<key>libsparkcolourpicker</key>
+			<dict>
+				<key>defaults</key>
+				<string>me.conorthedev.pastel.colorprefs</string>
+				<key>key</key>
+				<string>kCustomBadgeBorderColor</string>
+				<key>fallback</key>
+				<string>#000000</string>
+				<key>alpha</key>
+				<true/>
+				<key>PostNotification</key>
+	        	<string>me.conorthedev.pastel.prefs/ReloadPrefs</string>
+			</dict>
+			<key>label</key>
+			<string>Custom Border Colour</string>
+			<key>key</key>
+			<string>kCustomBadgeBorderColor</string>
 		</dict>
 		<dict>
 			<key>cell</key>
