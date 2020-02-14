@@ -1,10 +1,12 @@
 #import "Pastel.h"
-#import "SparkColourPickerUtils.h"
+#import <SparkDev97/SparkColourPickerUtils.h>
 #import <Cephei/HBPreferences.h>
 
 BOOL kEnabled;
 BOOL kCustomColorEnabled;
 BOOL kCustomTextColorEnabled;
+BOOL kBadgeBorderColorEnabled;
+BOOL kCustomBadgeBorderColorEnabled;
 BOOL kNotificationBannerEnabled;
 BOOL kNotificationBadgeEnabled;
 BOOL kCustomNotificationBgColourEnabled;
@@ -14,6 +16,13 @@ NSMutableDictionary *colourCache;
 NSDictionary* colourPreferencesDictionary;
 
 %group badges
+
+static UIColor *colorShiftedBy(UIColor *color, CGFloat shift) {
+  CGFloat red, green, blue, alpha;
+  [color getRed:&red green:&green blue:&blue alpha:&alpha];
+  return [UIColor colorWithRed:red + shift green:green + shift blue:blue + shift alpha:alpha];
+}
+
 %hook SBIconBadgeView
 
 - (void)configureForIcon:(SBApplicationIcon*)arg1 infoProvider:(SBIconView*)arg2 {
@@ -55,8 +64,10 @@ NSDictionary* colourPreferencesDictionary;
   UIColor *color = NULL;
   NSString* colourString = NULL;
   NSString* textColourString = NULL;
+  NSString* borderColourString = NULL;
 
   UIColor *textColor = [UIColor whiteColor];
+  UIColor *borderColor = NULL;
 
   if(!kEnabled || !kNotificationBadgeEnabled) {
     // If the tweak is disabled, use the system red colour as the colour
@@ -66,6 +77,7 @@ NSDictionary* colourPreferencesDictionary;
     if(colourPreferencesDictionary) {
       colourString = [colourPreferencesDictionary objectForKey:@"kCustomColor"];
       textColourString = [colourPreferencesDictionary objectForKey:@"kCustomTextColor"];
+      borderColourString = [colourPreferencesDictionary objectForKey:@"kCustomBadgeBorderColor"];
     }
 
     if(!kCustomColorEnabled) {
@@ -109,6 +121,22 @@ NSDictionary* colourPreferencesDictionary;
   UIImageView *backgroundView = MSHookIvar<UIImageView *>(self, "_backgroundView");
   backgroundView.image = [backgroundView.image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
   [backgroundView setTintColor:color];
+
+  // Set border colour
+  if(kEnabled && kNotificationBadgeEnabled && kBadgeBorderColorEnabled) {
+    if(kCustomBadgeBorderColorEnabled && borderColourString) {
+      borderColor = [SparkColourPickerUtils colourWithString:borderColourString withFallback:@"#000000"];
+    } else {
+      borderColor = colorShiftedBy(color, 0.25);
+    }
+  	backgroundView.layer.cornerRadius = 13;
+  	backgroundView.layer.borderWidth = 2;
+  	backgroundView.layer.borderColor = borderColor.CGColor;
+  } else {
+    backgroundView.layer.cornerRadius = 0;
+    backgroundView.layer.borderWidth = 0;
+    backgroundView.layer.borderColor = [UIColor clearColor].CGColor;
+  }
 }
 
 %end
@@ -258,6 +286,8 @@ void reloadPrefs() {
         @"kNotificationBannerEnabled": @YES,
         @"kNotificationBadgeEnabled": @YES,
         @"kCustomNotificationBgColourEnabled": @NO,
+        @"kBadgeBorderColorEnabled": @YES,
+        @"kCustomBadgeBorderColorEnabled": @NO,
         @"kCustomColorEnabled": @NO,
         @"kCustomTextColorEnabled": @NO
   }];
@@ -269,12 +299,16 @@ void reloadPrefs() {
 	[preferences registerBool:&kCustomColorEnabled default:NO forKey:@"kCustomColorEnabled"];
 	[preferences registerBool:&kCustomTextColorEnabled default:NO forKey:@"kCustomTextColorEnabled"];
   [preferences registerBool:&kCustomNotificationBgColourEnabled default:NO forKey:@"kCustomNotificationBgColourEnabled"];
+  [preferences registerBool:&kBadgeBorderColorEnabled default:YES forKey:@"kBadgeBorderColorEnabled"];
+  [preferences registerBool:&kCustomBadgeBorderColorEnabled default:NO forKey:@"kCustomBadgeBorderColorEnabled"];
 
 	NSLog(@"[Pastel] (DEBUG) Current Enabled State: %i", kEnabled);
   NSLog(@"[Pastel] (DEBUG) Current Notification Banner Enabled State: %i", kNotificationBannerEnabled);
   NSLog(@"[Pastel] (DEBUG) Current Notification Badge Enabled State: %i", kNotificationBadgeEnabled);
+  NSLog(@"[Pastel] (DEBUG) Current Notification Badge Border Enabled State: %i", kBadgeBorderColorEnabled);
 	NSLog(@"[Pastel] (DEBUG) Current Custom Badge Color Enabled State: %i", kCustomColorEnabled);
   NSLog(@"[Pastel] (DEBUG) Current Custom Badge Text Color Enabled State: %i", kCustomTextColorEnabled);
+  NSLog(@"[Pastel] (DEBUG) Current Custom Badge Border Color Enabled State: %i", kCustomBadgeBorderColorEnabled);
   NSLog(@"[Pastel] (DEBUG) Current Custom Notification Background Color Enabled State: %i", kCustomNotificationBgColourEnabled);
 }
 
